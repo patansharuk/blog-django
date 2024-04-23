@@ -1,0 +1,46 @@
+{% extends 'base.html' %} {% block content %}
+<h1 id="message">{{ message }}</h1>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <input id="title" type="text" name="title" value="" placeholder="Enter title">
+    <input id="description" type="text" name="description" value="" placeholder="Enter description">
+    <input type="submit" value="New Blog" class="btn btn-info" />
+</form>
+
+<div class="container-fluid">
+  <div class="row">
+    {% for blog in blogs %}
+    <div class="col-2">
+      <div class="card" style="width: 18rem">
+        <img
+          src="https://eadn-wc02-4138436.nxedge.io/wp-content/uploads/2019/07/structure-blog-url-768x403.png"
+          class="card-img-top"
+          alt="blog_image"
+        />
+        <div class="card-body">
+          <h5 class="card-title">{{ blog.title }}</h5>
+          <p class="card-text">{{ blog.description }}</p>
+          <form action="{{ blog.id }}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Show" class="btn btn-success" />
+            <input type="submit" value="Edit" class="btn btn-warning" />
+            <input type="submit" value="Delete" class="btn btn-danger" />
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  window.onload = hide;
+  function hide() {
+    const message = document.getElementById("message");
+    setTimeout(() => {
+      message.innerHTML = "";
+    }, 5000);
+  }
+</script>
+{% endblock content %}
