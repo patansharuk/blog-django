@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>create blog</h1>
+    <form action="/blog/" method="post">
+        {% csrf_token %}
+        <input
+          id="title"
+          type="text"
+          name="title"
+          value="{{ blog.title }}"
+          placeholder="Enter title"
+        />
+        <input
+          id="description"
+          type="text"
+          name="description"
+          value="{{ blog.description }}"
+          placeholder="Enter description"
+        />
+        <input type="submit" value="New Blog" class="btn btn-info" />
+      </form>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %} {% block content %}
+<div class="col-2">
+  <div class="card" style="width: 18rem">
+    <img
+      src="https://eadn-wc02-4138436.nxedge.io/wp-content/uploads/2019/07/structure-blog-url-768x403.png"
+      class="card-img-top"
+      alt="blog_image"
+    />
+    <div class="card-body">
+      <h5 class="card-title">{{ blog.title }}</h5>
+      <p class="card-text">{{ blog.description }}</p>
+      <a href="/blog" class="btn btn-success">Back</a>
+      <a href="edit" class="btn btn-warning">Edit</a>
+      <a href="destroy" class="btn btn-danger">Delete</a>
+    </div>
+  </div>
+</div>
+{% endblock content %}
