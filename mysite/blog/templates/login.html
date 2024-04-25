@@ -1,0 +1,47 @@
+{% extends 'base.html' %} {% block content %} {% include 'message.html' %}
+
+<div class="container">
+  <form class="row g-3 w-50 m-auto" action="" method="post">
+    {% csrf_token %}
+    <div class="col-12 mb-2">
+      <label for="username" class="visually-hidden">Username</label>
+      <input
+        type="text"
+        class="form-control"
+        id="username"
+        placeholder="Enter the email"
+        value="{{ username }}"
+        name="username"
+      />
+    </div>
+    <div class="col-12 mb-2">
+      <label for="password" class="visually-hidden">Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password"
+        placeholder="Password"
+        value="{{ password }}"
+        name="password"
+      />
+    </div>
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary mb-3">
+        Confirm identity
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+    function hideAlert(){
+        msgAlert.classList = 'd-none'
+    }
+
+    const username = document.getElementById('username')
+    const password = document.getElementById('password')
+    const msgAlert = document.getElementById('msg-alert')
+    username.addEventListener('keydown', hideAlert)
+    password.addEventListener('keydown', hideAlert)
+</script>
+{% endblock content %}

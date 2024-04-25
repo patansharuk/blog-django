@@ -5,23 +5,41 @@ from django.template import loader
 from blog.models import Blog
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
-def verify_user_authenticated(request):
-    logStatus = request.user.is_authenticated
-    if(not logStatus):
-        return redirect('not_found_path')
+def get_request_messages(request, message=''):
+    msgs = messages.get_messages(request)
+    notice = ''
+    for msg in msgs:
+        notice += str(msg)
+    if(notice != ''):
+        message = notice
+    return message
 
-def login_user(request):
-    user = authenticate(request, username='sharukhan', password='Alikhan@321')
-    if user is not None:
-        login(request, user)
-        return redirect('blogs_path')
-    else:
-        return redirect('not_found_path')
+class Login(TemplateView):
+    def get(self, request):
+        message = get_request_messages(request)
+        return render(request, 'login.html', {'message': message})
+
+    def post(self, request):
+        path = request.GET.get('next') or 'blogs_path'
+        data_str = request.body.decode('utf-8')
+        form_data = QueryDict(data_str)
+        username = form_data.get('username')
+        password = form_data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, 'Login Success :-)')
+            return redirect(path)
+        else:
+            return render(request, 'login.html', {'message': 'Login Failed :-( Invalid details entered!','username':username,'password':password})
 
 def logout_user(request):
     logout(request)
-    return redirect('not_found_path')
+    messages.success(request, 'Logout successfully')
+    return redirect('log_path')
 
 def not_found(request):
     return HttpResponse('this is not found page!')
@@ -29,17 +47,15 @@ def not_found(request):
 class Blogs(TemplateView):
     template_name = 'home.html'
 
+    @method_decorator(login_required(login_url="/blog/login"))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
     def get(self, request):
         # fetch the blogs
         blogs = Blog.objects.all()
-        message = f'found {len(blogs)} blogs'
-        # handle notices
-        msgs = messages.get_messages(request)
-        notice = ''
-        for msg in msgs:
-            notice += str(msg)
-        if(notice != ''):
-            message = notice
+        msg = f'found {len(blogs)} blogs'
+        message = get_request_messages(request, msg)
 
         return render(request, self.template_name, {'blogs': blogs, 'message': message})
 
@@ -57,18 +73,22 @@ class Blogs(TemplateView):
         return redirect('blogs_path')
 
 class RevokeBlog(Blogs):
+    @login_required(login_url='/blog/login')
     def create_blog(request):
         blog = Blog()
         return render(request, 'create.html',{'blog': blog})
 
+    @login_required(login_url='/blog/login')
     def show_blog(request, blog_id):
         blog = Blog.objects.get(pk=blog_id)
         return render(request, 'show.html', {'blog': blog})
 
+    @login_required(login_url='/blog/login')
     def edit_blog(request, blog_id):
         blog = Blog.objects.get(pk=blog_id)
         return render(request, 'edit.html', {'blog': blog})
 
+    @login_required(login_url='/blog/login')
     def update_blog(request, blog_id):
         blog = Blog.objects.get(pk=blog_id)
         data_str = request.body.decode('utf-8')
@@ -78,6 +98,7 @@ class RevokeBlog(Blogs):
         blog.save()
         return render(request, 'show.html', {'blog': blog})
 
+    @login_required(login_url='/blog/login')
     def delete_blog(request, blog_id):
         try:
             blog = Blog.objects.get(pk=blog_id)

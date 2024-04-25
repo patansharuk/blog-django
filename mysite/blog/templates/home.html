@@ -1,5 +1,5 @@
 {% extends 'base.html' %} {% block content %}
-<h1 id="message">{{ message }}</h1>
+{% include 'message.html' %}
 
 <a href="create" class="btn btn-info">Create Blog</a>
 
@@ -25,14 +25,4 @@
     {% endfor %}
   </div>
 </div>
-
-<script>
-  window.onload = hide;
-  function hide() {
-    const message = document.getElementById("message");
-    setTimeout(() => {
-      message.innerHTML = "";
-    }, 5000);
-  }
-</script>
 {% endblock content %}

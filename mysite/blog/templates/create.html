@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% include 'message.html' %}
     <h1>create blog</h1>
     <form action="/blog/" method="post">
         {% csrf_token %}
