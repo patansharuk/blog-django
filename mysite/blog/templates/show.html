@@ -9,9 +9,9 @@
     <div class="card-body">
       <h5 class="card-title">{{ blog.title }}</h5>
       <p class="card-text">{{ blog.description }}</p>
-      <a href="/blog" class="btn btn-success">Back</a>
-      <a href="edit" class="btn btn-warning">Edit</a>
-      <a href="destroy" class="btn btn-danger">Delete</a>
+      <a href="{% url 'blogs_path' %}" class="btn btn-success">Back</a>
+      <a href="{% url 'edit_blog_path' blog.id %}" class="btn btn-warning">Edit</a>
+      <a href="{% url 'delete_blog_path' blog.id %}" class="btn btn-danger">Delete</a>
     </div>
   </div>
 </div>

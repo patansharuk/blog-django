@@ -4,6 +4,27 @@ from django.views.generic import TemplateView
 from django.template import loader
 from blog.models import Blog
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+
+def verify_user_authenticated(request):
+    logStatus = request.user.is_authenticated
+    if(not logStatus):
+        return redirect('not_found_path')
+
+def login_user(request):
+    user = authenticate(request, username='sharukhan', password='Alikhan@321')
+    if user is not None:
+        login(request, user)
+        return redirect('blogs_path')
+    else:
+        return redirect('not_found_path')
+
+def logout_user(request):
+    logout(request)
+    return redirect('not_found_path')
+
+def not_found(request):
+    return HttpResponse('this is not found page!')
 
 class Blogs(TemplateView):
     template_name = 'home.html'

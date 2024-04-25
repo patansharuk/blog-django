@@ -16,12 +16,9 @@
         <div class="card-body">
           <h5 class="card-title">{{ blog.title }}</h5>
           <p class="card-text">{{ blog.description }}</p>
-          <form action="{{ blog.id }}" method="post">
-            {% csrf_token %}
-            <a href="{{blog.id}}/show" class="btn btn-success">Read more</a>
-            <a href="{{blog.id}}/edit" class="btn btn-warning">Edit</a>
-            <a href="{{blog.id}}/destroy" class="btn btn-danger">Delete</a>
-          </form>
+          <a href="{% url 'show_blog_path' blog.id %}" class="btn btn-success">Read More</a>
+          <a href="{% url 'edit_blog_path' blog.id %}" class="btn btn-warning">Edit</a>
+          <a href="{% url 'delete_blog_path' blog.id %}" class="btn btn-danger">Delete</a>
         </div>
       </div>
     </div>
