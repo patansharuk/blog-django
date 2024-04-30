@@ -12,6 +12,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.views.decorators.cache import cache_page
 
 @swagger_auto_schema(
     method='get',
@@ -116,6 +117,7 @@ class Blogs(TemplateView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+    @method_decorator(cache_page(60*1), name='get')
     def get(self, request):
         # fetch the blogs
         pgno = request.GET.get('pg') or 1
@@ -125,7 +127,6 @@ class Blogs(TemplateView):
         msg = f'found {len(blogs)} blogs'
         message = get_request_messages(request, msg)
         context = {**context, 'message': message}
-        print(context)
 
         return render(request, self.template_name, context)
 
