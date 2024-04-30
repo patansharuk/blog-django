@@ -1,7 +1,10 @@
 from django.urls import path, re_path
-from .views import Blogs, RevokeBlog, Comments, catch_all_view, logout_user, not_found, Login
+from .views import Blogs, RevokeBlog, Comments, catch_all_view, logout_user, not_found, Login, hello_world, hello_world_form
 
 urlpatterns = [
+    path('hello',hello_world, name='hello-world'),
+    path('form_form', hello_world_form),
+
     path("login", Login.as_view(), name="log_path"),
     path("logout",logout_user,name="logout_path"),
     path("notfound",not_found,name="not_found_path"),

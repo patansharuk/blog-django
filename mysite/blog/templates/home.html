@@ -3,9 +3,11 @@
 
 <a href="create" class="btn btn-info">Create Blog</a>
 
+<hr/>
+
 <div class="container-fluid">
   <div class="row">
-    {% for blog in blogs %}
+    {% for blog in page_items %}
     <div class="col-2">
       <div class="card" style="width: 18rem">
         <img
@@ -14,8 +16,8 @@
           alt="blog_image"
         />
         <div class="card-body">
-          <h5 class="card-title">{{ blog.title }}</h5>
-          <p class="card-text">{{ blog.description }}</p>
+          <h5 class="card-title text-truncate">{{ blog.title }}</h5>
+          <p class="card-text text-truncate">{{ blog.description }}</p>
           <a href="{% url 'show_blog_path' blog.id %}" class="btn btn-success">Read More</a>
           <a href="{% url 'edit_blog_path' blog.id %}" class="btn btn-warning">Edit</a>
           <a href="{% url 'delete_blog_path' blog.id %}" class="btn btn-danger">Delete</a>
@@ -25,4 +27,13 @@
     {% endfor %}
   </div>
 </div>
+
+<hr/>
+{% if has_prev %}
+<a href="/blog/?pg={{prev_page_number}}" class="btn btn-success">{{prev_page_number}}</a>
+{% endif %}
+<button class="badge badge-info">{{page}}</button>
+{% if has_next %}
+<a href="/blog/?pg={{next_page_number}}" class="btn btn-success">{{next_page_number}}</a>
+{% endif %}
 {% endblock content %}

@@ -7,6 +7,52 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.core.paginator import Paginator
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+@swagger_auto_schema(
+    method='get',
+    responses={
+        200: openapi.Response(
+            description='Successful response',
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'message': openapi.Schema(type=openapi.TYPE_STRING)
+                }
+            )
+        ),
+        401: openapi.Response(
+            description='Unauthorized',
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'error': openapi.Schema(type=openapi.TYPE_STRING)
+                }
+            )
+        ),
+        500: openapi.Response(
+            description='Internal server error',
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'error': openapi.Schema(type=openapi.TYPE_STRING)
+                }
+            )
+        )
+    }
+)
+
+@api_view(['GET'])
+def hello_world(request):
+    return Response({'message': 'Hello, World!'})
+
+@api_view(['POST'])
+def hello_world_form(request):
+    return Response({'message': 'Hello, World!'})
 
 def get_request_messages(request, message=''):
     msgs = messages.get_messages(request)
@@ -16,6 +62,25 @@ def get_request_messages(request, message=''):
     if(notice != ''):
         message = notice
     return message
+
+def get_pagination_object(items={}, page_number=1, items_per_page=10):
+    p = Paginator(items, items_per_page)
+    # current page details
+    page = p.page(page_number)
+    page_items = page.object_list
+    # prev page details
+    has_prev = page.has_previous()
+    prev_page_number = int(page_number) - 1
+    if(has_prev):
+        prev_page_number = page.previous_page_number()
+    # next page details
+    has_next = page.has_next()
+    next_page_number = int(page_number) + 1
+    if(has_next):
+        next_page_number = page.next_page_number()
+
+    context = {'has_next': has_next, 'has_prev': has_prev, 'prev_page_number': prev_page_number, 'next_page_number': next_page_number,'page': page, 'page_items': page_items}
+    return context
 
 class Login(TemplateView):
     def get(self, request):
@@ -53,11 +118,16 @@ class Blogs(TemplateView):
 
     def get(self, request):
         # fetch the blogs
+        pgno = request.GET.get('pg') or 1
         blogs = Blog.objects.all()
+        context = get_pagination_object(blogs, pgno, 3)
+
         msg = f'found {len(blogs)} blogs'
         message = get_request_messages(request, msg)
+        context = {**context, 'message': message}
+        print(context)
 
-        return render(request, self.template_name, {'blogs': blogs, 'message': message})
+        return render(request, self.template_name, context)
 
     def post(self, request):
         data_str = request.body.decode('utf-8')
